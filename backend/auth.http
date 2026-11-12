@@ -6,13 +6,9 @@ POST {{url}}/auth/login
 Content-Type: application/json
 
 {
-    "username": "pepe13",
+    "email": "prueba@mail.com",
     "password": "hola1234"
 }
 
 ###
 @token = {{login.response.body.token}}
-
-### Consultar usuarios
-GET {{url}}/usuarios
-Authorization: Bearer {{token}}
