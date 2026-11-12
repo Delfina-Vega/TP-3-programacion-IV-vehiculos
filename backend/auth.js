@@ -20,7 +20,6 @@ export function authConfig() {
   passport.use(
     new Strategy(jwtOptions, async (payload, next) => {
       // Si llegamos a este punto es porque el token es valido
-      // Si hace falta realizar algun paso extra antes de llamar al handler de la API
       next(null, payload);
     }),
   );
@@ -29,47 +28,51 @@ export function authConfig() {
 router.post(
   "/login",
   [
-    body("username").isAlphanumeric("es-ES").isLength({ max: 50 }),
-    body("password").isAlphanumeric("es-ES").isLength({ max: 50 }),
+    body("email").isEmail().isLength({ max: 100 }),
+    body("password").notEmpty().isLength({ max: 50 }),
   ],
   verificarValidaciones,
   async (req, res) => {
-    const { username, password } = req.body;
+    try{
+        const { email, password } = req.body;
 
     // Consultar por el usuario a la base de datos
     const [usuarios] = await db.execute(
-      "SELECT * FROM usuarios WHERE username=?",
-      [username],
+      "SELECT * FROM usuarios WHERE email=?",
+      [email],
     );
 
+    //Mismo mensaje si no existe el usuario o si la contraseña no coincide
     if (usuarios.length === 0) {
-      return res.status(400).json("Usuario inválido");
+      return res.status(401).json({ error: "Credenciales invalidas" });
     }
 
-    // Verificar la contraseña
-    const hashedPassword = usuarios[0].password;
+    // Verificar la contraseña en el hash guardado
+    const passwordComparada = await bcrypt.compare(password, usuarios[0].password,
 
-    const passwordComparada = await bcrypt.compare(password, hashedPassword);
+    );
 
     if (!passwordComparada) {
-      return res.status(400).json("Contraseña inválida");
+      return res.status(401).json({ error: "Credenciales invalidas" });
     }
 
-    // Generar jwt
+    // Generar jwt con expiracion de 4 horas
     const payload = {
-      userId: usuarios[0].id,
-      esAdmin: Boolean(usuarios[0].es_admin),
-    };
+      userId: usuarios[0].id };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "30m",
+      expiresIn: "4h",
     });
 
-    // Devolver token, nombre de usuario y si es administrador
+    // Devolver token y datos del usuario (nunca la contraseña)
     res.json({
       token,
-      username: usuarios[0].username,
-      esAdmin: Boolean(usuarios[0].es_admin),
+      nombre: usuarios[0].nombre,
+      email: usuarios[0].email,
     });
+  } catch (e) {
+    console.error(e.message);
+    res.status(500).json({ error: "Error interno del servidor" })
+  } 
   },
 );
 
