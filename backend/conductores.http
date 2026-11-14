@@ -1,0 +1,75 @@
+@url=http://localhost:3000
+
+### Login 
+# @name login
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "prueba@mail.com",
+    "password": "hola1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### Listar conductores
+GET {{url}}/conductores
+Authorization: Bearer {{token}}
+
+### Filtrar por apellido
+GET {{url}}/conductores?apellido=Perez
+Authorization: Bearer {{token}}
+
+### Consultar un conductor
+GET {{url}}/conductores/1
+Authorization: Bearer {{token}}
+
+### Crear conductor
+POST {{url}}/conductores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Esteban",
+    "apellido": "Lopez",
+    "numeroDocumento": "30547831",
+    "numeroLicencia": "CRO160",
+    "fechaAltaLicencia": "2010-02-18",
+    "fechaVencimientoLicencia": "2035-02-18"
+}
+
+### Modificar conductor
+PUT {{url}}/conductores/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Pedro",
+    "apellido": "Bazan",
+    "numeroDocumento": "28560123",
+    "numeroLicencia": "ALG1224",
+    "fechaAltaLicencia": "2020-03-15",
+    "fechaVencimientoLicencia": "2028-03-15"
+}
+
+### Eliminar conductor
+DELETE {{url}}/conductores/3
+Authorization: Bearer {{token}}
+
+### Sin token, debe dar 401
+GET {{url}}/conductores
+
+### Vencimiento anterior al alta, debe dar 400
+POST {{url}}/conductores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Ana",
+    "apellido": "Lopez",
+    "numeroDocumento": "28123456",
+    "numeroLicencia": "LIC99999",
+    "fechaAltaLicencia": "2024-01-01",
+    "fechaVencimientoLicencia": "2020-01-01"
+}
