@@ -63,6 +63,47 @@ export const validarVehiculo = [
     .withMessage("La capacidad de carga debe ser un número mayor a 0"),
 ];
 
+// Validacion de filtros de conductores
+export const validarFiltrosConductores = [
+  query("apellido").optional().trim().isLength({ max: 50 }),
+];
+
+// Validacion de conductor
+export const validarConductor = [
+  body("nombre")
+    .trim()
+    .isAlpha("es-ES", { ignore: " '-" })
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El nombre debe tener solo letras (hasta 50 caracteres)"),
+  body("apellido")
+    .trim()
+    .isAlpha("es-ES", { ignore: " '-" })
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El apellido debe tener solo letras (hasta 50 caracteres)"),
+  body("numeroDocumento")
+    .trim()
+    .isNumeric({ no_symbols: true })
+    .isLength({ min: 7, max: 10 })
+    .withMessage("El documento debe tener entre 7 y 10 números"),
+  body("numeroLicencia")
+    .trim()
+    .isAlphanumeric("es-ES")
+    .isLength({ min: 5, max: 20 })
+    .withMessage("La licencia debe tener entre 5 y 20 letras o números"),
+  body("fechaAltaLicencia")
+    .isDate({ format: "YYYY-MM-DD", strictMode: true })
+    .withMessage("Fecha de alta inválida (formato AAAA-MM-DD)"),
+  body("fechaVencimientoLicencia")
+    .isDate({ format: "YYYY-MM-DD", strictMode: true })
+    .withMessage("Fecha de vencimiento inválida (formato AAAA-MM-DD)")
+    .custom((valor, { req }) => {  //.custom compara dos fechas como texto
+      if (valor <= req.body.fechaAltaLicencia) {
+        throw new Error("El vencimiento debe ser posterior al alta");
+      }
+      return true;
+    }),
+];
+
 // Middleware para verificar validaciones
 export const verificarValidaciones = (req, res, next) => {
   const resultadoValidacion = validationResult(req);
