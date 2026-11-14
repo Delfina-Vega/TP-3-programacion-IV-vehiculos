@@ -1,0 +1,72 @@
+@url=http://localhost:3000
+
+### Login para obtener el token
+# @name login
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "prueba@mail.com",
+    "password": "hola1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### Listar vehiculos
+GET {{url}}/vehiculos
+Authorization: Bearer {{token}}
+
+### Filtrar por marca
+GET {{url}}/vehiculos?marca=Ford
+Authorization: Bearer {{token}}
+
+### Consultar un vehiculo
+GET {{url}}/vehiculos/1
+Authorization: Bearer {{token}}
+
+### Crear vehiculo
+POST {{url}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Ford",
+    "modelo": "Cargo 1730",
+    "patente": "AB112F",
+    "anio": 2024,
+    "capacidadCarga": 18000
+}
+
+### Modificar vehiculo
+PUT {{url}}/vehiculos/5
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Citroen",
+    "modelo": "Citroen C3",
+    "patente": "ABD112",
+    "anio": 2024,
+    "capacidadCarga": 15000
+}
+
+### Eliminar vehiculo
+DELETE {{url}}/vehiculos/1
+Authorization: Bearer {{token}}
+
+### Sin token 
+GET {{url}}/vehiculos
+
+### Patente inválida
+POST {{url}}/vehiculos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "marca": "Ford",
+    "modelo": "Cargo",
+    "patente": "12",
+    "anio": 2020,
+    "capacidadCarga": 12000
+}
