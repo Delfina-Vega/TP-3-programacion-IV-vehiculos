@@ -1,8 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { conectarDB } from "./db.js";
-import productosRouter from "./productos.js";
-import categoriasRouter from "./categorias.js";
+import vehiculosRouter from "./vehiculos.js";
 import usuariosRouter from "./usuarios.js";
 import authRouter, { authConfig } from "./auth.js";
 
@@ -25,8 +24,7 @@ app.get("/", (req, res) => {
   res.send("Hola mundo!");
 });
 
-app.use("/productos", productosRouter);
-app.use("/categorias", categoriasRouter);
+app.use("/vehiculos", vehiculosRouter);
 app.use("/usuarios", usuariosRouter);
 app.use("/auth", authRouter);
 
