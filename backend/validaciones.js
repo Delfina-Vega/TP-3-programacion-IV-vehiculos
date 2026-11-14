@@ -44,11 +44,11 @@ export const validarFiltrosVehiculos = [
 export const validarVehiculo = [
   body("marca")
     .trim()
-    .isLength({ min: 1, max: 50 })
+    .isLength({ min: 1, max: 45 })
     .withMessage("La marca debe tener entre 1 y 50 caracteres"),
   body("modelo")
     .trim()
-    .isLength({ min: 1, max: 50 })
+    .isLength({ min: 1, max: 45 })
     .withMessage("El modelo debe tener entre 1 y 50 caracteres"),
   body("patente")
     .trim()
