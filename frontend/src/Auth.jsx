@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useState } from "react";
+import { API_URL, mensajeDeError } from "./api";
 
-// Contexto para compartir el estado de autenticacion/autorizacion
+// Contexto para compartir el estado de autenticacion
 const AuthContext = createContext(null);
 
 // Hook personzalizado para acceder al contexto de auth
@@ -9,42 +10,65 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [esAdmin, setEsAdmin] = useState(null);
-  const [error, setError] = useState(null);
-
-  const login = useCallback(async (username, password) => {
-    setError(null);
+//La sesion se guarda en sessionStorage para  que no se pierda al recargar
+function leerSesion() {
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+        return JSON.parse(sessionStorage.getItem("sesion")) ?? {};
+
+    } catch {
+        return {};
+    }
+}
+
+function guardarSesion(sesion) {
+    try {
+        if (sesion.token) {
+            sessionStorage.setItem("sesion", JSON.stringify(sesion));
+        } else {
+            sessionStorage.removeItem("sesion");
+
+        }
+    } catch {
+        //si el nanvegador no permire sessionStorage, la sesion dura hasta recargar
+    }
+}
+
+
+export const AuthProvider = ({ children }) => {
+  const [sesion, setSesion] = useState(leerSesion);
+  const { token = null, nombre = null } = sesion;
+
+  const login = useCallback(async (email, password) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
-      const session = await response.json();
+      const datos = await response.json();
 
-      if (!response.ok && response.status === 400) {
-        throw new Error(session);
+      if (!response.ok ) {
+        throw new Error(mensajeDeError(datos));
       }
 
-      setToken(session.token);
-      setUsername(session.username);
-      setEsAdmin(session.esAdmin);
+      const nuevaSesion = { token: datos.token, nombre: datos.nombre };
+
+      guardarSesion(nuevaSesion);
+      setSesion(nuevaSesion);
       return { success: true };
     } catch (err) {
-      setError(err.message);
-      return { success: false };
+        const mensaje =
+        err instanceof TypeError
+        ? "No se pudo conectar con el servidor"
+        : err.message;
+      return { success: false, error: mensaje };
     }
-  }, []);
+    }, []);
 
-  const logout = useCallback(() => {
-    setToken(null);
-    setUsername(null);
-    setEsAdmin(null);
-    setError(null);
+    const  logout = useCallback(() => {
+        guardarSesion({});
+        setSesion({});
   }, []);
 
   const fetchAuth = useCallback(
@@ -53,21 +77,26 @@ export const AuthProvider = ({ children }) => {
         throw new Error("No esta iniciada la session");
       }
 
-      return fetch(url, {
+      const response= await fetch(url, {
         ...options,
-        headers: { ...options.headers, Authorization: `Bearer ${token}` },
+        headers: { ...options.headers,Authorization: `Bearer ${token}` },
       });
+
+      //Token vencido o invalido: se cierra la sesion
+      if (response.status === 401) {
+        logout();
+      }
+
+      return response;
     },
-    [token],
+    [token, logout],
   );
 
   return (
     <AuthContext.Provider
       value={{
         token,
-        username,
-        esAdmin,
-        error,
+        nombre,
         isAuthenticated: !!token,
         login,
         logout,
