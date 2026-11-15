@@ -6,34 +6,10 @@ export const validarAutenticacion = passport.authenticate("jwt", {
   session: false,
 });
 
-// Validacion de filtros de productos
-export const validarFiltrosProductos = [
-  query("nombre").isAlpha("es-ES").optional(),
-  query("cantidadMin").isInt({ min: 1 }).optional(),
-  query("cantidadMax").isInt({ min: 1 }).optional(),
-];
 
 export const validarId = param("id").isInt({ min: 1 });
 
-// Validacion de producto
-export const validarProducto = [
-  body("nombre")
-    .isAlpha("es-ES")
-    .withMessage("Solo letras")
-    .isLength({ min: 1, max: 45 })
-    .withMessage("Solo entre 1 y 45 caracteres"),
-  body("categoriaId")
-    .isInt({ min: 1 })
-    .withMessage("categoriaId debe ser un numero positivo mayor a 0"),
-  body("cantidad")
-    .isInt({ min: 0 })
-    .withMessage("Solo numeros positivos o cero"),
-];
 
-// Validacion de categoria
-export const validarCategoria = [
-  body("nombre").isAlpha("es-ES", { ignore: " " }).isLength({ max: 50 }),
-];
 
 // Validacion de filtros de vehiculos
 export const validarFiltrosVehiculos = [
