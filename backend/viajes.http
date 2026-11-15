@@ -1,0 +1,107 @@
+@url=http://localhost:3000
+
+### Login (para obtener el token)
+# @name login
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "prueba@mail.com",
+    "password": "hola1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### Registrar viaje
+POST {{url}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "vehiculoId": 5,
+    "conductorId": 2,
+    "fechaSalida": "2026-11-20T20:00",
+    "fechaLlegada": "2026-11-21T05:30",
+    "origen": "La Rioja",
+    "destino": "Formosa",
+    "kilometros": 1.200,
+    "observaciones": "Sin novedades"
+}
+
+### Listar todos los viajes
+GET {{url}}/viajes
+Authorization: Bearer {{token}}
+
+### Historial por vehículo
+GET {{url}}/viajes?vehiculoId=3
+Authorization: Bearer {{token}}
+
+### Historial por conductor
+GET {{url}}/viajes?conductorId=4
+Authorization: Bearer {{token}}
+
+### Total de kilómetros por vehículo
+GET {{url}}/viajes/kilometros?vehiculoId=3
+Authorization: Bearer {{token}}
+
+### Total de kilómetros por conductor
+GET {{url}}/viajes/kilometros?conductorId=1
+Authorization: Bearer {{token}}
+
+### Consultar un viaje
+GET {{url}}/viajes/5
+Authorization: Bearer {{token}}
+
+### Modificar viaje
+PUT {{url}}/viajes/5
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "vehiculoId": 4,
+    "conductorId": 4,
+    "fechaSalida": "2026-11-15T08:00",
+    "fechaLlegada": "2026-11-15T20:00",
+    "origen": "La Rioja",
+    "destino": "Salta",
+    "kilometros": 686,
+    "observaciones": "Demora por tránsito"
+}
+
+### Eliminar viaje
+DELETE {{url}}/viajes/8
+Authorization: Bearer {{token}}
+
+### Sin token (debe dar 401)
+GET {{url}}/viajes
+
+### Llegada anterior a la salida (debe dar 400)
+POST {{url}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "vehiculoId": 1,
+    "conductorId": 1,
+    "fechaSalida": "2026-11-10T14:00",
+    "fechaLlegada": "2026-11-10T08:00",
+    "origen": "La Rioja",
+    "destino": "Córdoba",
+    "kilometros": 450
+}
+
+### Vehículo inexistente, debe dar 400
+POST {{url}}/viajes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "vehiculoId": 9999,
+    "conductorId": 1,
+    "fechaSalida": "2026-11-10T08:00",
+    "fechaLlegada": "2026-11-10T14:00",
+    "origen": "La Rioja",
+    "destino": "Córdoba",
+    "kilometros": 450
+}
