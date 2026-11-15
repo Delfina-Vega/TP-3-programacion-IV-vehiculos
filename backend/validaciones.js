@@ -104,6 +104,64 @@ export const validarConductor = [
     }),
 ];
 
+// Validacion de filtros de viajes, historial por vehiculo o por conductor
+export const validarFiltrosViajes = [
+  query("vehiculoId").optional().isInt({ min: 1 }),
+  query("conductorId").optional().isInt({ min: 1 }),
+];
+
+// Formato aceptado: 2026-11-14T08:30 (o con espacio y segundos opcionales)
+const FORMATO_FECHA_HORA = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2})?$/;
+
+// Validacion de viaje
+export const validarViaje = [
+  body("vehiculoId")
+    .isInt({ min: 1 })
+    .withMessage("vehiculoId debe ser un numero mayor a 0"),
+  body("conductorId")
+    .isInt({ min: 1 })
+    .withMessage("conductorId debe ser un numero mayor a 0"),
+  body("fechaSalida")
+    .matches(FORMATO_FECHA_HORA)
+    .withMessage("Fecha de salida invalida (formato AAAA-MM-DDTHH:MM)")
+    .custom((valor) => {
+      if (isNaN(Date.parse(valor))) {
+        throw new Error("Fecha de salida invalida");
+      }
+      return true;
+    }),
+  body("fechaLlegada")
+    .matches(FORMATO_FECHA_HORA)
+    .withMessage("Fecha de llegada invalida (formato AAAA-MM-DDTHH:MM)")
+    .custom((valor, { req }) => {
+      const llegada = Date.parse(valor);
+      if (isNaN(llegada)) {
+        throw new Error("Fecha de llegada invalida");
+      }
+      if (llegada < Date.parse(req.body.fechaSalida)) {
+        throw new Error("La llegada no puede ser anterior a la salida");
+      }
+      return true;
+    }),
+
+  body("origen")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage("El origen debe tener entre 1 y 100 caracteres"),
+  body("destino")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage("El destino debe tener entre 1 y 100 caracteres"),
+  body("kilometros")
+    .isFloat({ gt: 0, max: 99999999 })
+    .withMessage("Los kilometros deben ser un numero mayor a 0"),
+  body("observaciones")
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage("Las observaciones admiten hasta 1000 caracteres"),
+];
+
 // Middleware para verificar validaciones
 export const verificarValidaciones = (req, res, next) => {
   const resultadoValidacion = validationResult(req);

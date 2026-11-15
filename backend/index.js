@@ -5,6 +5,7 @@ import vehiculosRouter from "./vehiculos.js";
 import usuariosRouter from "./usuarios.js";
 import authRouter, { authConfig } from "./auth.js";
 import conductoresRouter from "./conductores.js";
+import viajesRouter from "./viajes.js";
 
 conectarDB();
 
@@ -29,6 +30,7 @@ app.use("/vehiculos", vehiculosRouter);
 app.use("/usuarios", usuariosRouter);
 app.use("/auth", authRouter);
 app.use("/conductores", conductoresRouter);
+app.use("/viajes", viajesRouter);
 
 app.listen(port, () => {
   console.log(`La aplicación esta funcionando en ${port}`);
