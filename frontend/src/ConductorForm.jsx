@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { useAuth } from "./Auth";
 import { API_URL, mensajeDeError, mensajeDeFallo } from "./api";
+import { Campo } from "./Campo";
 
 const VACIO = {
   nombre: "",
@@ -17,16 +18,6 @@ const SOLO_LETRAS = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ '-]+$/;
 const FORMATO_DOCUMENTO = /^[0-9]{7,10}$/;
 const FORMATO_LICENCIA = /^[A-Za-z0-9]{5,20}$/;
 
-// Etiqueta + input + mensaje de error
-function Campo({ id, etiqueta, error, ...props }) {
-  return (
-    <div className="campo">
-      <label htmlFor={id}>{etiqueta}</label>
-      <input id={id} {...props} />
-      {error && <p className="error">{error}</p>}
-    </div>
-  );
-}
 
 // Detecta si la ruta tiene un 'id' para alternar entre modo edicion y creacion
 export function ConductorForm() {
