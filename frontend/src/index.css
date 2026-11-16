@@ -284,3 +284,8 @@ tbody tr:last-child td {
   padding: 1rem;
   color: #52606d;
 }
+
+.vencida {
+  color: var(--error);
+  font-weight: 600;
+}

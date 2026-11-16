@@ -14,3 +14,9 @@ export function mensajeDeFallo(err) {
     ? "No se pudo conectar con el servidor"
     : err.message;
 }
+
+// Convierte 2026-11-14 en 14/11/2026, sin usar Date, para evitar problemas de zona horaria
+export function formatearFecha(fecha) {
+  const [anio, mes, dia] = fecha.split("-");
+  return `${dia}/${mes}/${anio}`;
+}
