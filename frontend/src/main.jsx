@@ -11,6 +11,7 @@ import { AuthLayout } from "./AuthLayout";
 import { Vehiculos } from "./Vehiculos";
 import { VehiculoForm } from "./VehiculoForm";
 import { Conductores } from "./Conductores";
+import { ConductorForm } from "./ConductorForm";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -28,6 +29,8 @@ createRoot(document.getElementById("root")).render(
               </Route>
               <Route path="conductores" element={<AuthLayout />}>
               <Route index element={<Conductores />} />
+              <Route path="nuevo" element={<ConductorForm /> } />
+              <Route path=":id/editar" element={<ConductorForm />} />
               </Route>
             </Route>
         </Routes>
