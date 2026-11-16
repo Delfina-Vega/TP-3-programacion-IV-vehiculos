@@ -38,6 +38,36 @@ export function Vehiculos() {
     obtenerVehiculos();
   }, [obtenerVehiculos]);
 
+//Solicita confirmacion al usuario y envia la peticion DELETE para borrar el vehiculo
+  const eliminar = async (vehiculo) => {
+    const confirmado = window.confirm(
+        `¿Eliminar el vehículo ${vehiculo.patente} (${vehiculo.marca} ${vehiculo.modelo})?`,
+    );
+    
+//Si el usuario cancela el cuadro de dialogo, se detiene la ejecucion
+    if (!confirmado) {
+        return;
+    }
+
+    setError(null);
+    try {
+        const response = await fetchAuth(
+            `${API_URL}/vehiculos/${vehiculo.id}`,
+            { method: "DELETE"},
+        );
+
+        if (!response.ok) {
+            setError(mensajeDeError(await response.json()));
+            return;
+        }
+
+// Vuelve a consultar la API para actualizar la tabla tras eliminar el registro
+        obtenerVehiculos();
+    } catch (err) {
+        setError(mensajeDeFallo(err));
+    }
+  };
+
   return (
     <>
       <div className="encabezado-pagina">
@@ -93,6 +123,12 @@ export function Vehiculos() {
                       >
                         Editar
                       </Link>
+                      <button
+                      className="peligro"
+                      onClick={() => eliminar(vehiculo)}
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   </td>
                 </tr>
