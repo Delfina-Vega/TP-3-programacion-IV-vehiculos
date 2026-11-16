@@ -46,6 +46,35 @@ export function Conductores() {
     obtenerConductores();
   }, [obtenerConductores]);
 
+// Solicita confirmacion al usuario y envia la peticion DELETE para borrar el conductor
+const eliminar = async (conductor) => {
+    const confirmado = window.confirm(
+      `¿Eliminar al conductor ${conductor.apellido}, ${conductor.nombre}?`,
+    );
+    // Si el usuario cancela el cuadro de dialogo, se interrumpe la accion
+    if (!confirmado) {
+      return;
+    }
+
+    setError(null);
+    try {
+      const response = await fetchAuth(
+        `${API_URL}/conductores/${conductor.id}`,
+        { method: "DELETE" },
+      );
+
+      if (!response.ok) {
+        setError(mensajeDeError(await response.json()));
+        return;
+      }
+
+// Recarga el listado desde la API para reflejar el cambio en la tabla
+      obtenerConductores();
+    } catch (err) {
+      setError(mensajeDeFallo(err));
+    }
+  };
+
   return (
     <>
       <div className="encabezado-pagina">
@@ -108,6 +137,12 @@ export function Conductores() {
                       >
                         Editar
                       </Link>
+                      <button
+                      className="peligro"
+                      onClick={() => eliminar(conductor)}
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   </td>
                 </tr>
