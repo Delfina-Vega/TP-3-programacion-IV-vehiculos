@@ -289,3 +289,8 @@ tbody tr:last-child td {
   color: var(--error);
   font-weight: 600;
 }
+
+td.observaciones {
+  min-width: 180px;
+  white-space: normal;
+}

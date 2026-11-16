@@ -20,3 +20,9 @@ export function formatearFecha(fecha) {
   const [anio, mes, dia] = fecha.split("-");
   return `${dia}/${mes}/${anio}`;
 }
+
+// Convierte 2026-11-10T08:00 en 10/11/2026 08:00
+export function formatearFechaHora(fechaHora) {
+  const [fecha, hora] = fechaHora.split("T");
+  return `${formatearFecha(fecha)} ${hora}`;
+}
