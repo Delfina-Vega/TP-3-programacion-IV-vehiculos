@@ -7,6 +7,8 @@ import { Home } from "./Home";
 import { Registro } from "./Registro";
 import { AuthProvider } from "./Auth";
 import { Login } from "./Login";
+import { AuthLayout } from "./AuthLayout";
+import { Vehiculos } from "./Vehiculos";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -17,6 +19,9 @@ createRoot(document.getElementById("root")).render(
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="registro" element={<Registro/>} />
+            <Route path="vehiculos" element={<AuthLayout />}>
+              <Route index element={<Vehiculos />} />
+            </Route>
             </Route>
         </Routes>
       </BrowserRouter>

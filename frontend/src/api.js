@@ -7,3 +7,10 @@ export function mensajeDeError(datos) {
   }
   return datos?.error ?? datos?.mensaje ?? "Ocurrió un error inesperado";
 }
+
+// Mensaje para errores de red o excepciones al llamar a la API
+export function mensajeDeFallo(err) {
+  return err instanceof TypeError
+    ? "No se pudo conectar con el servidor"
+    : err.message;
+}
