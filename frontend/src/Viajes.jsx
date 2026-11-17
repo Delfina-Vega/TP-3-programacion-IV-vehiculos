@@ -77,6 +77,31 @@ export function Viajes() {
     setSearchParams(nuevos);
   };
 
+  const eliminar = async (viaje) => {
+    const confirmado = window.confirm(
+      `¿Eliminar el viaje de ${viaje.origen} a ${viaje.destino} (${formatearFechaHora(viaje.fechaSalida)})?`,
+    );
+    if (!confirmado) {
+      return;
+    }
+
+    setError(null);
+    try {
+      const response = await fetchAuth(`${API_URL}/viajes/${viaje.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        setError(mensajeDeError(await response.json()));
+        return;
+      }
+
+      obtenerViajes();
+    } catch (err) {
+      setError(mensajeDeFallo(err));
+    }
+  };
+
   return (
     <>
       <div className="encabezado-pagina">
@@ -186,8 +211,14 @@ export function Viajes() {
                       >
                         Editar
                       </Link>
+
                     </div>
-                  </td>
+                  </td><button
+                        className="peligro"
+                        onClick={() => eliminar(viaje)}
+                      >
+                        Eliminar
+                      </button>
                 </tr>
               ))}
             </tbody>
