@@ -131,6 +131,12 @@ const eliminar = async (conductor) => {
                   </td>
                   <td>
                     <div className="acciones">
+                        <Link
+                        className="boton secundario"
+                        to={`/viajes?conductorId=${conductor.id}`}
+                      >
+                        Viajes
+                      </Link>
                       <Link
                         className="boton secundario"
                         to={`/conductores/${conductor.id}/editar`}

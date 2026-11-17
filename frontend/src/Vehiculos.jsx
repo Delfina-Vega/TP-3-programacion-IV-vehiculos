@@ -117,6 +117,12 @@ export function Vehiculos() {
                   <td>{vehiculo.capacidadCarga.toLocaleString("es-AR")}</td>
                   <td>
                     <div className="acciones">
+                        <Link
+                        className="boton secundario"
+                        to={`/viajes?vehiculoId=${vehiculo.id}`}
+                      >
+                        Viajes
+                      </Link>
                       <Link
                         className="boton secundario"
                         to={`/vehiculos/${vehiculo.id}/editar`}
