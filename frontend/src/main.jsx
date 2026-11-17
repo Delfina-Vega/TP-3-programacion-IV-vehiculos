@@ -13,6 +13,7 @@ import { VehiculoForm } from "./VehiculoForm";
 import { Conductores } from "./Conductores";
 import { ConductorForm } from "./ConductorForm";
 import { Viajes } from "./Viajes";
+import { ViajeForm } from "./ViajeForm";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -36,6 +37,8 @@ createRoot(document.getElementById("root")).render(
 
               <Route path="viajes" element={<AuthLayout />} >
               <Route index element={<Viajes />} />
+              <Route path="nuevo" element={<ViajeForm />} />
+              <Route path=":id/editar" element={<ViajeForm />} />
               </Route>
             </Route>
         </Routes>
